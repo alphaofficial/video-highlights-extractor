@@ -1,0 +1,119 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Model cache
+.cache/
+models/
+transformers_cache/
+huggingface_hub/
+
+# Video files (input)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.flv
+*.wmv
+
+# Audio files
+*.mp3
+*.wav
+*.flac
+*.aac
+
+# Output directories
+*_highlights/
+output/
+highlights/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+
+# FFmpeg temporary files
+ffmpeg*.log
+
+# Test files
+test_*
+sample_*
+
+# Configuration files with sensitive data
+config.json
+secrets.json
+.env
+
+# Large model files
+*.bin
+*.safetensors
+*.pt
+*.pth
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
