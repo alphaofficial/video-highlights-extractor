@@ -53,7 +53,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "video-highlights=video_highlights.__main__:main",
+            "video-highlights=video_extractor.__main__:main",
         ],
     },
     classifiers=[
