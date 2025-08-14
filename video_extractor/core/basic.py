@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 class BasicHighlightExtractor(BaseHighlightExtractor):
     """Basic highlight extractor using audio and visual analysis"""
     
-    def __init__(self, video_path: str, min_duration: int = 30, max_highlights: int = None, mode: str = "basic"):
-        super().__init__(video_path, min_duration, max_highlights, mode)
+    def __init__(self, video_path: str, min_duration: int = 30, max_highlights: int = None, mode: str = "basic", content_tags: list = None):
+        super().__init__(video_path, min_duration, max_highlights, mode, content_tags)
     
     def analyze_video_content(self) -> List[Tuple[float, float, float]]:
         """

@@ -25,8 +25,8 @@ logger = logging.getLogger(__name__)
 class MLHighlightExtractor(BaseHighlightExtractor):
     """ML-powered highlight extractor using pre-trained models"""
     
-    def __init__(self, video_path: str, min_duration: int = 30, max_highlights: int = None, mode: str = "ml"):
-        super().__init__(video_path, min_duration, max_highlights, mode)
+    def __init__(self, video_path: str, min_duration: int = 30, max_highlights: int = None, mode: str = "ml", content_tags: list = None):
+        super().__init__(video_path, min_duration, max_highlights, mode, content_tags)
         
         # Initialize ML models
         self._init_models()

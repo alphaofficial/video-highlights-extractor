@@ -22,7 +22,7 @@ pip install -e .
 # For ML-powered analysis
 pip install -e .[ml]
 
-# For SmolVLM vision-language model (recommended for gaming)
+# For SmolVLM vision-language model (content-aware)
 pip install -e .[smolvlm]
 
 # For all features
@@ -56,9 +56,30 @@ python -m video_extractor video.mp4 --mode basic --min-duration 30
 python -m video_extractor video.mp4 --mode ml --min-duration 30
 ```
 
-### SmolVLM Mode (Vision-Language Model) - **RECOMMENDED for Gaming**
+### SmolVLM Mode (Vision-Language Model) - **Content-Aware**
 ```bash
-python -m video_extractor video.mp4 --mode smolvlm --min-duration 30
+python -m video_extractor video.mp4 --mode smolvlm --min-duration 30 --tags gaming
+```
+
+### Content-Specific Examples
+```bash
+# Gaming content
+python -m video_extractor gameplay.mp4 --mode smolvlm --tags gaming
+
+# Cooking videos
+python -m video_extractor recipe.mp4 --mode smolvlm --tags cooking
+
+# Sports highlights
+python -m video_extractor match.mp4 --mode smolvlm --tags sports
+
+# Music performances
+python -m video_extractor concert.mp4 --mode smolvlm --tags music
+
+# Tutorial content
+python -m video_extractor howto.mp4 --mode smolvlm --tags tutorial
+
+# Multiple tags
+python -m video_extractor video.mp4 --mode smolvlm --tags gaming sports
 ```
 
 ### Available Options
@@ -66,6 +87,7 @@ python -m video_extractor video.mp4 --mode smolvlm --min-duration 30
 - `--mode`: Analysis mode (`basic`, `ml`, `smolvlm`) - default: `basic`
 - `--min-duration`: Minimum duration for each highlight in seconds - default: `30`
 - `--max-highlights`: Maximum number of highlights (auto-calculated if not specified)
+- `--tags`: Content tags to optimize detection (`gaming`, `cooking`, `sports`, `music`, `tutorial`, etc.) - default: `general`
 
 ## Analysis Modes
 
@@ -81,13 +103,21 @@ python -m video_extractor video.mp4 --mode smolvlm --min-duration 30
 - **Action Recognition**: Identifies sports, games, and dynamic content
 - **Best for**: Sports, action videos, general content
 
-### 3. SmolVLM Mode ⭐ **RECOMMENDED for Gaming**
+### 3. SmolVLM Mode ⭐ **Content-Aware AI**
 - **Vision-Language Understanding**: Uses SmolVLM for intelligent scene analysis
-- **Gaming-Optimized**: Specifically tuned for gaming content (Call of Duty, Fortnite, etc.)
-- **Context-Aware**: Understands combat, explosions, intense gameplay, achievements
+- **Content-Optimized**: Adapts to different content types using tags (gaming, cooking, sports, etc.)
+- **Context-Aware**: Understands content-specific moments and highlights
 - **Smart Scoring**: Combines visual understanding with audio analysis
 - **GPU Accelerated**: Automatically uses CUDA if available for faster processing
-- **Best for**: Gaming videos, streaming content, action-packed footage
+- **Best for**: Any content type when you specify appropriate tags
+
+#### Supported Content Tags:
+- **`gaming`**: FPS, MOBA, Battle Royale, Racing games - detects eliminations, clutch plays, victories
+- **`cooking`**: Recipe tutorials, baking, grilling - highlights technique demonstrations, reveals
+- **`sports`**: Football, basketball, soccer - finds goals, amazing plays, dramatic moments  
+- **`music`**: Live performances, concerts - captures performance peaks, crowd reactions
+- **`tutorial`**: How-to, educational - identifies key explanations, demonstrations, results
+- **`general`**: Default for any other content type
 
 ## Output
 

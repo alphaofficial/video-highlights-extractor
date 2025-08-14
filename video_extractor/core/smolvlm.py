@@ -94,8 +94,8 @@ class SmolVLMHighlightExtractor(BaseHighlightExtractor):
         logger.info(f"Found {len(highlights)} content highlights")
         return highlights
     
-    def _identify_game_genre(self) -> str:
-        """Identify the game genre using SmolVLM"""
+    def _identify_content_type(self) -> str:
+        """Identify the content type using SmolVLM based on provided tags"""
         if not self.model:
             return "unknown"
         
@@ -112,37 +112,43 @@ class SmolVLMHighlightExtractor(BaseHighlightExtractor):
             if not frames:
                 return "unknown"
             
-            # Use SmolVLM to identify game genre
-            prompt = """Look at these gaming screenshots and identify the game genre:
+            # Create content type detection prompt based on tags
+            primary_tag = self.content_tags[0] if self.content_tags else "general"
+            
+            if "gaming" in self.content_tags:
+                prompt = """Look at this video content and identify the gaming genre:
+Options: FPS, Battle Royale, MOBA, Racing, Fighting, Sports, Strategy, RPG, Other
+Just respond with the genre name."""
+            elif "cooking" in self.content_tags:
+                prompt = """Look at this cooking video and identify the type:
+Options: Recipe Tutorial, Baking, Grilling, Fine Dining, Fast Cooking, Meal Prep, Other
+Just respond with the type."""
+            elif "sports" in self.content_tags:
+                prompt = """Look at this sports content and identify the sport:
+Options: Football, Basketball, Soccer, Tennis, Baseball, Hockey, Combat Sports, Other
+Just respond with the sport name."""
+            elif "music" in self.content_tags:
+                prompt = """Look at this music content and identify the type:
+Options: Live Performance, Music Video, Studio Recording, DJ Set, Concert, Other
+Just respond with the type."""
+            elif "tutorial" in self.content_tags:
+                prompt = """Look at this tutorial content and identify the type:
+Options: Tech Tutorial, DIY, Educational, How-to, Software Demo, Other
+Just respond with the type."""
+            else:
+                prompt = f"""Look at this {primary_tag} video content and describe what type of content this is.
+Just give a brief 1-2 word description."""
 
-Options:
-- FPS (First Person Shooter) - games like Call of Duty, Valorant, Counter-Strike
-- Battle Royale - games like Fortnite, PUBG, Apex Legends  
-- MOBA - games like League of Legends, Dota 2
-- Racing - games like Forza, Gran Turismo, F1
-- Fighting - games like Street Fighter, Tekken, Mortal Kombat
-- Sports - games like FIFA, NBA 2K, Madden
-- Strategy - games like StarCraft, Age of Empires
-- RPG - games like Elden Ring, Skyrim, Witcher
-- Other
-
-Just respond with the genre name (e.g., "FPS" or "Battle Royale")."""
-
-            # Analyze the first frame to determine genre
-            genre = self._query_smolvlm_single_frame(frames[0], prompt)
+            # Analyze the first frame to determine content type
+            content_type = self._query_smolvlm_single_frame(frames[0], prompt)
             
             # Clean up the response
-            genre = genre.strip().upper()
-            known_genres = ["FPS", "BATTLE ROYALE", "MOBA", "RACING", "FIGHTING", "SPORTS", "STRATEGY", "RPG"]
+            content_type = content_type.strip().lower().replace(" ", "_")
             
-            for known_genre in known_genres:
-                if known_genre in genre:
-                    return known_genre.lower().replace(" ", "_")
-            
-            return "unknown"
+            return content_type if content_type else "unknown"
             
         except Exception as e:
-            logger.warning(f"Game genre detection failed: {e}")
+            logger.warning(f"Content type detection failed: {e}")
             return "unknown"
     
     def _analyze_gaming_segment(self, start_time: float, end_time: float) -> float:
@@ -198,23 +204,23 @@ Just respond with the genre name (e.g., "FPS" or "Battle Royale")."""
         
         return frame if ret else None
     
-    def _analyze_frames_for_gaming_content(self, frames: List[np.ndarray]) -> float:
-        """Analyze frames for gaming highlight content using SmolVLM"""
+    def _analyze_frames_for_content(self, frames: List[np.ndarray]) -> float:
+        """Analyze frames for highlight content using SmolVLM"""
         if not frames:
             return 0.0
         
-        # Create gaming-specific prompts based on detected genre
-        prompts = self._get_genre_specific_prompts()
+        # Create content-specific prompts based on tags
+        prompts = self._get_content_specific_prompts()
         
         total_score = 0.0
         
         for frame in frames:
             frame_score = 0.0
             
-            # Analyze frame with multiple gaming-specific questions
+            # Analyze frame with multiple content-specific questions
             for prompt in prompts:
                 response = self._query_smolvlm_single_frame(frame, prompt)
-                score = self._parse_gaming_response(response)
+                score = self._parse_content_response(response)
                 frame_score += score
             
             # Average the scores from different prompts
@@ -224,39 +230,46 @@ Just respond with the genre name (e.g., "FPS" or "Battle Royale")."""
         # Average across all frames
         return total_score / len(frames) if frames else 0.0
     
-    def _get_genre_specific_prompts(self) -> List[str]:
-        """Get gaming analysis prompts based on detected genre"""
-        base_prompts = [
-            "Rate this gaming moment's excitement level from 1-10. Consider action, skill demonstration, and dramatic tension. Respond with just the number.",
-            "Is this a highlight-worthy gaming moment that players would want to clip and share? Answer YES or NO and briefly explain why.",
-            "Does this show high-skill gameplay, an exciting event, or an emotional peak moment? Rate from 1-10.",
-        ]
+    def _get_content_specific_prompts(self) -> List[str]:
+        """Get content analysis prompts based on content tags"""
+        primary_tag = self.content_tags[0] if self.content_tags else "general"
         
-        genre_prompts = {
-            "fps": [
-                "Does this show eliminations, headshots, clutch plays, or intense firefights? Rate excitement 1-10.",
-                "Are there kill feeds, multi-kills, or skillful shooting visible? Rate highlight potential 1-10.",
-            ],
-            "battle_royale": [
-                "Does this show final circle action, eliminations, or survival moments? Rate excitement 1-10.",
-                "Are there hot drops, third parties, or victory moments happening? Rate highlight potential 1-10.",
-            ],
-            "moba": [
-                "Does this show team fights, eliminations, or objective captures? Rate excitement 1-10.",
-                "Are there ability combos, pentakills, or clutch plays visible? Rate highlight potential 1-10.",
-            ],
-            "racing": [
-                "Does this show overtakes, crashes, or close racing action? Rate excitement 1-10.",
-                "Are there photo finishes, perfect turns, or dramatic moments? Rate highlight potential 1-10.",
+        if "gaming" in self.content_tags:
+            return [
+                "Rate this gaming moment's excitement level from 1-10. Consider action, skill demonstration, and dramatic tension. Respond with just the number.",
+                "Is this a highlight-worthy gaming moment that players would want to clip and share? Rate from 1-10.",
+                "Does this show eliminations, clutch plays, or intense action? Rate excitement 1-10.",
             ]
-        }
-        
-        # Combine base prompts with genre-specific ones
-        prompts = base_prompts.copy()
-        if self.game_type and self.game_type in genre_prompts:
-            prompts.extend(genre_prompts[self.game_type])
-        
-        return prompts
+        elif "cooking" in self.content_tags:
+            return [
+                "Rate this cooking moment's interest level from 1-10. Consider technique demonstration, final reveals, and key steps. Respond with just the number.",
+                "Is this a highlight-worthy cooking moment that viewers would want to see? Rate from 1-10.",
+                "Does this show important cooking techniques, ingredient reveals, or finished dishes? Rate interest 1-10.",
+            ]
+        elif "sports" in self.content_tags:
+            return [
+                "Rate this sports moment's excitement level from 1-10. Consider goals, amazing plays, and dramatic moments. Respond with just the number.",
+                "Is this a highlight-worthy sports moment that fans would want to replay? Rate from 1-10.",
+                "Does this show scoring, incredible athleticism, or game-changing moments? Rate excitement 1-10.",
+            ]
+        elif "music" in self.content_tags:
+            return [
+                "Rate this music moment's energy level from 1-10. Consider performance peaks, crowd reactions, and musical highlights. Respond with just the number.",
+                "Is this a highlight-worthy music moment that fans would want to share? Rate from 1-10.",
+                "Does this show powerful vocals, instrumental solos, or crowd engagement? Rate energy 1-10.",
+            ]
+        elif "tutorial" in self.content_tags:
+            return [
+                "Rate this tutorial moment's importance from 1-10. Consider key explanations, demonstrations, and results. Respond with just the number.",
+                "Is this a highlight-worthy tutorial moment that learners would want to reference? Rate from 1-10.",
+                "Does this show important steps, before/after comparisons, or key insights? Rate importance 1-10.",
+            ]
+        else:
+            return [
+                f"Rate this {primary_tag} moment's interest level from 1-10. Consider engagement, importance, and shareability. Respond with just the number.",
+                f"Is this a highlight-worthy {primary_tag} moment that viewers would want to see? Rate from 1-10.",
+                f"Does this show important or exciting {primary_tag} content? Rate interest 1-10.",
+            ]
     
     def _query_smolvlm_single_frame(self, frame: np.ndarray, prompt: str) -> str:
         """Query SmolVLM with a single frame and prompt"""
@@ -308,11 +321,14 @@ Just respond with the genre name (e.g., "FPS" or "Battle Royale")."""
             logger.warning(f"SmolVLM query failed: {e}")
             return "0"
     
-    def _parse_gaming_response(self, response: str) -> float:
+    def _parse_content_response(self, response: str) -> float:
         """Parse SmolVLM response to extract numeric score"""
         try:
-            # Clean the response - remove the prompt part
-            clean_response = response.replace("<image>", "").replace("Is this an exciting gaming moment? Rate 1-10 where 5+ means it's worth watching. Just give the number.", "").strip()
+            # Clean the response - remove the prompt part and common phrases
+            clean_response = response.replace("<image>", "").strip()
+            # Remove common prompt phrases
+            for phrase in ["Rate 1-10", "Respond with just the number", "Just give the number"]:
+                clean_response = clean_response.replace(phrase, "").strip()
             
             # Look for decimal numbers first, then integers
             import re
@@ -537,11 +553,12 @@ Just respond with the genre name (e.g., "FPS" or "Battle Royale")."""
             if frame is None:
                 return 0.0
             
-            # Use a simpler, more lenient gaming prompt
-            prompt = "Is this an exciting gaming moment? Rate 1-10 where 5+ means it's worth watching. Just give the number."
+            # Use a simpler, more lenient content-aware prompt
+            primary_tag = self.content_tags[0] if self.content_tags else "general"
+            prompt = f"Is this an exciting {primary_tag} moment? Rate 1-10 where 5+ means it's worth watching. Just give the number."
             
             response = self._query_smolvlm_single_frame(frame, prompt)
-            score = self._parse_gaming_response(response)
+            score = self._parse_content_response(response)
             
             logger.info(f"SmolVLM response: '{response}' -> score: {score}")
             
