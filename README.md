@@ -1,9 +1,6 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
 
-<!-- PROJECT SHIELDS -->
-[![MIT License][license-shield]][license-url]
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
@@ -18,17 +15,6 @@ Video Highlights Extractor is an AI-powered Python library that automatically id
 * ⚡ **GPU Accelerated** - Automatic CUDA support for faster processing
 * 🎛️ **Highly Configurable** - Customize duration, number of highlights, and content optimization
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-### Built With
-
-* [![Python][Python.py]][Python-url]
-* [![OpenCV][OpenCV.py]][OpenCV-url]
-* [![PyTorch][PyTorch.py]][PyTorch-url]
-* [![Transformers][Transformers.py]][Transformers-url]
-* [![FFmpeg][FFmpeg.py]][FFmpeg-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -76,7 +62,6 @@ Video Highlights Extractor is an AI-powered Python library that automatically id
    pip install -e .[all]
    ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -131,7 +116,6 @@ python -m video_extractor video.mp4 \
 | `--min-duration` | Minimum highlight duration in seconds | `30` |
 | `--max-highlights` | Maximum number of highlights | Auto-calculated |
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ANALYSIS MODES -->
 ## Analysis Modes
@@ -155,7 +139,6 @@ python -m video_extractor video.mp4 \
 - **GPU Accelerated**: Automatic CUDA support for faster processing
 - **Best for**: Any content type with appropriate tags
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTENT TAGS -->
 ## Content Tags
@@ -172,8 +155,6 @@ Content tags help the AI understand what to look for in your videos:
 
 **Note**: Tags are completely optional. Without tags, the system uses generic highlight detection.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <!-- ROADMAP -->
 ## Roadmap
 
@@ -189,7 +170,6 @@ Content tags help the AI understand what to look for in your videos:
 
 See the [open issues](https://github.com/alphaofficial/video-highlights-extractor/issues) for a full list of proposed features (and known issues).
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- LICENSE -->
