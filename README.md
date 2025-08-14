@@ -122,4 +122,4 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -e .[all]
 ```
 
-The library uses a modular architecture with separate extractors for each mode in `video_highlights/core/`.
+The library uses a modular architecture with separate extractors for each mode in `video_highlights/core/`.# video-highlights-extractor
