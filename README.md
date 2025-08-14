@@ -1,23 +1,36 @@
 # Video Highlights Extractor
 
-A CLI tool that automatically extracts 9:16 vertical highlights from videos using AI-powered scene detection.
+A Python library that automatically extracts 9:16 vertical highlights from videos using AI-powered scene detection.
 
 ## Features
 
-- **Smart Highlight Detection**: Uses audio energy analysis and visual motion detection
+- **Smart Highlight Detection**: Multiple AI-powered modes for different use cases
 - **9:16 Aspect Ratio**: Perfect for social media (Instagram, TikTok, YouTube Shorts)
-- **Minimum Duration**: Ensures each highlight is at least 90 seconds (configurable)
+- **Configurable Duration**: Set minimum duration for each highlight (default: 30 seconds)
 - **Center Cropping**: Automatically centers the crop for best composition
 - **Multiple Formats**: Supports MP4, AVI, MOV, MKV, WebM, and more
 
 ## Installation
 
-1. Install Python dependencies:
+### Quick Start (Basic Mode)
 ```bash
-pip install -r requirements.txt
+pip install -e .
 ```
 
-2. Install FFmpeg (required for video processing):
+### With Optional AI Features
+```bash
+# For ML-powered analysis
+pip install -e .[ml]
+
+# For SmolVLM vision-language model (recommended for gaming)
+pip install -e .[smolvlm]
+
+# For all features
+pip install -e .[all]
+```
+
+### FFmpeg Requirement
+FFmpeg is required for video processing:
 ```bash
 # macOS
 brew install ffmpeg
@@ -29,57 +42,84 @@ sudo apt update && sudo apt install ffmpeg
 # Download from https://ffmpeg.org/download.html
 ```
 
-## Available Versions
+## Usage
 
-### 1. SmolVLM Version (`smolvlm_highlights.py`) - **RECOMMENDED**
-Uses SmolVLM vision-language model for intelligent gaming highlight detection:
+The library provides a unified command-line interface with different analysis modes:
+
+### Basic Mode (Audio + Visual Analysis)
 ```bash
-# Install ML dependencies
-pip install -r requirements_smolvlm.txt
-
-# Run SmolVLM version
-python smolvlm_highlights.py path/to/your/video.mp4 --min-duration 30
+python -m video_highlights video.mp4 --mode basic --min-duration 30
 ```
 
-### 2. Basic Version (`video_highlights.py`)
-Audio energy analysis and visual motion detection:
+### ML Mode (Machine Learning Models)
 ```bash
-python video_highlights.py path/to/your/video.mp4 --min-duration 30
+python -m video_highlights video.mp4 --mode ml --min-duration 30
 ```
 
-### 3. Quick Test (`quick_test.py`)
-Fast processing for testing:
+### SmolVLM Mode (Vision-Language Model) - **RECOMMENDED for Gaming**
 ```bash
-python quick_test.py path/to/your/video.mp4 --min-duration 30
+python -m video_highlights video.mp4 --mode smolvlm --min-duration 30
 ```
 
-### Options
+### Available Options
 
-- `--min-duration`: Duration for each highlight in seconds (default: 30)
+- `--mode`: Analysis mode (`basic`, `ml`, `smolvlm`) - default: `basic`
+- `--min-duration`: Minimum duration for each highlight in seconds - default: `30`
 - `--max-highlights`: Maximum number of highlights (auto-calculated if not specified)
 
-## How SmolVLM Version Works
+## Analysis Modes
 
-**Most intelligent option for gaming content:**
+### 1. Basic Mode
+- **Audio Energy Analysis**: Detects volume spikes and audio intensity
+- **Visual Motion Detection**: Identifies fast movement and scene changes
+- **Lightweight**: No AI dependencies required
+- **Best for**: General content, quick processing
 
-1. **Vision Analysis**: SmolVLM analyzes video frames to identify:
-   - Combat and action sequences
-   - Explosions and gunfire  
-   - Fast movement and intense gameplay
-   - Exciting gaming moments
+### 2. ML Mode  
+- **Image Classification**: Uses ResNet-50 for action detection
+- **Advanced Audio Analysis**: Multiple audio features (energy, brightness, activity)
+- **Action Recognition**: Identifies sports, games, and dynamic content
+- **Best for**: Sports, action videos, general content
 
-2. **Audio Analysis**: Detects energy spikes and audio intensity
-3. **Smart Scoring**: Combines visual and audio analysis for optimal highlights
-4. **Intelligent Selection**: Avoids overlapping clips and selects best moments
+### 3. SmolVLM Mode ⭐ **RECOMMENDED for Gaming**
+- **Vision-Language Understanding**: Uses SmolVLM for intelligent scene analysis
+- **Gaming-Optimized**: Specifically tuned for gaming content (Call of Duty, Fortnite, etc.)
+- **Context-Aware**: Understands combat, explosions, intense gameplay, achievements
+- **Smart Scoring**: Combines visual understanding with audio analysis
+- **GPU Accelerated**: Automatically uses CUDA if available for faster processing
+- **Best for**: Gaming videos, streaming content, action-packed footage
 
 ## Output
 
 Highlights are saved in a folder named `{original_filename}_highlights/` with files named:
-- `highlight_1.mp4` (highest scored)
-- `highlight_2.mp4`
+- `highlight_01.mp4` (highest scored)
+- `highlight_02.mp4`
 - etc.
 
 Each output video is:
-- 1080x1920 resolution (9:16 aspect ratio)
-- H.264 encoded for compatibility
-- Center-cropped from the original video
+- **1080x1920 resolution** (9:16 aspect ratio)
+- **H.264 encoded** for compatibility with all platforms
+- **Center-cropped** from the original video for optimal framing
+- **Preserves audio** with AAC encoding
+
+## Performance Tips
+
+- **GPU Acceleration**: SmolVLM and ML modes automatically use CUDA if available
+- **Processing Time**: Expect ~1-2 minutes per minute of video (varies by mode and hardware)
+- **Memory Usage**: Ensure sufficient RAM for longer videos (8GB+ recommended)
+- **Storage**: Output files are typically 10-20% the size of the original
+
+## Development
+
+To contribute or modify the library:
+
+```bash
+# Clone and install in development mode
+git clone <repository-url>
+cd video-highlights-extractor
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -e .[all]
+```
+
+The library uses a modular architecture with separate extractors for each mode in `video_highlights/core/`.

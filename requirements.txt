@@ -1,6 +1,12 @@
+# Core dependencies for video-highlights-extractor
+# Install with: pip install -r requirements.txt
+# Or use setup.py for optional dependencies: pip install -e .[smolvlm]
+
 opencv-python>=4.8.0
 moviepy>=1.0.3
 librosa>=0.10.0
 scikit-learn>=1.3.0
 scipy>=1.11.0
 numpy>=1.24.0
+soundfile>=0.12.0
+ffmpeg-python>=0.2.0
