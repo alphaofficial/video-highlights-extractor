@@ -28,7 +28,7 @@ class BaseHighlightExtractor:
         self.min_duration = min_duration
         self.max_highlights = max_highlights
         self.mode = mode
-        self.content_tags = content_tags or ["general"]
+        self.content_tags = content_tags  # Can be None for generic behavior
         self.output_dir = Path(video_path).parent / f"{Path(video_path).stem}_highlights"
         self.output_dir.mkdir(exist_ok=True)
         

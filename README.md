@@ -1,67 +1,97 @@
-# Video Highlights Extractor
+<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+<a name="readme-top"></a>
 
-A Python library that automatically extracts 9:16 vertical highlights from videos using AI-powered scene detection.
+<!-- PROJECT SHIELDS -->
+[![MIT License][license-shield]][license-url]
 
-## Features
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-- **Smart Highlight Detection**: Multiple AI-powered modes for different use cases
-- **9:16 Aspect Ratio**: Perfect for social media (Instagram, TikTok, YouTube Shorts)
-- **Configurable Duration**: Set minimum duration for each highlight (default: 30 seconds)
-- **Center Cropping**: Automatically centers the crop for best composition
-- **Multiple Formats**: Supports MP4, AVI, MOV, MKV, WebM, and more
 
-## Installation
 
-### Quick Start (Basic Mode)
-```bash
-pip install -e .
-```
+Video Highlights Extractor is an AI-powered Python library that automatically identifies and extracts the most engaging moments from videos, converting them into vertical 9:16 format perfect for social media platforms like TikTok, Instagram Reels, and YouTube Shorts.
 
-### With Optional AI Features
-```bash
-# For ML-powered analysis
-pip install -e .[ml]
+**Key Features:**
+* 🎯 **Smart Content Detection** - Uses AI to understand different content types (gaming, cooking, sports, music, tutorials)
+* 📱 **Social Media Ready** - Outputs 9:16 vertical videos optimized for mobile platforms
+* 🧠 **Multiple AI Modes** - Choose from basic, ML-powered, or advanced vision-language analysis
+* ⚡ **GPU Accelerated** - Automatic CUDA support for faster processing
+* 🎛️ **Highly Configurable** - Customize duration, number of highlights, and content optimization
 
-# For SmolVLM vision-language model (content-aware)
-pip install -e .[smolvlm]
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-# For all features
-pip install -e .[all]
-```
+### Built With
 
-### FFmpeg Requirement
-FFmpeg is required for video processing:
-```bash
-# macOS
-brew install ffmpeg
+* [![Python][Python.py]][Python-url]
+* [![OpenCV][OpenCV.py]][OpenCV-url]
+* [![PyTorch][PyTorch.py]][PyTorch-url]
+* [![Transformers][Transformers.py]][Transformers-url]
+* [![FFmpeg][FFmpeg.py]][FFmpeg-url]
 
-# Ubuntu/Debian
-sudo apt update && sudo apt install ffmpeg
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-# Windows
-# Download from https://ffmpeg.org/download.html
-```
+<!-- GETTING STARTED -->
+## Getting Started
 
+### Prerequisites
+
+* Python 3.8 or higher
+* FFmpeg (for video processing)
+  ```sh
+  # macOS
+  brew install ffmpeg
+
+  # Ubuntu/Debian
+  sudo apt update && sudo apt install ffmpeg
+
+  # Windows - Download from https://ffmpeg.org/download.html
+  ```
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/alphaofficial/video-highlights-extractor.git
+   cd video-highlights-extractor
+   ```
+
+2. Create a virtual environment
+   ```sh
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install the package
+   ```sh
+   # Basic installation (audio + visual analysis)
+   pip install -e .
+
+   # With ML capabilities
+   pip install -e .[ml]
+
+   # With SmolVLM (content-aware AI)
+   pip install -e .[smolvlm]
+
+   # Full installation (all features)
+   pip install -e .[all]
+   ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- USAGE EXAMPLES -->
 ## Usage
 
-The library provides a unified command-line interface with different analysis modes:
+### Basic Usage
 
-### Basic Mode (Audio + Visual Analysis)
+Extract highlights using default settings:
 ```bash
-python -m video_extractor video.mp4 --mode basic --min-duration 30
+python -m video_extractor video.mp4
 ```
 
-### ML Mode (Machine Learning Models)
-```bash
-python -m video_extractor video.mp4 --mode ml --min-duration 30
-```
+### Content-Specific Extraction
 
-### SmolVLM Mode (Vision-Language Model) - **Content-Aware**
-```bash
-python -m video_extractor video.mp4 --mode smolvlm --min-duration 30 --tags gaming
-```
+Optimize extraction for specific content types:
 
-### Content-Specific Examples
 ```bash
 # Gaming content
 python -m video_extractor gameplay.mp4 --mode smolvlm --tags gaming
@@ -76,80 +106,98 @@ python -m video_extractor match.mp4 --mode smolvlm --tags sports
 python -m video_extractor concert.mp4 --mode smolvlm --tags music
 
 # Tutorial content
-python -m video_extractor howto.mp4 --mode smolvlm --tags tutorial
+python -m video_extractor tutorial.mp4 --mode smolvlm --tags tutorial
 
 # Multiple tags
 python -m video_extractor video.mp4 --mode smolvlm --tags gaming sports
 ```
 
-### Available Options
+### Advanced Options
 
-- `--mode`: Analysis mode (`basic`, `ml`, `smolvlm`) - default: `basic`
-- `--min-duration`: Minimum duration for each highlight in seconds - default: `30`
-- `--max-highlights`: Maximum number of highlights (auto-calculated if not specified)
-- `--tags`: Content tags to optimize detection (`gaming`, `cooking`, `sports`, `music`, `tutorial`, etc.) - default: `general`
+```bash
+python -m video_extractor video.mp4 \
+  --mode smolvlm \
+  --tags gaming \
+  --min-duration 45 \
+  --max-highlights 3
+```
 
+### Command Line Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--mode` | Analysis mode (`basic`, `ml`, `smolvlm`) | `basic` |
+| `--tags` | Content tags for optimization (optional) | None |
+| `--min-duration` | Minimum highlight duration in seconds | `30` |
+| `--max-highlights` | Maximum number of highlights | Auto-calculated |
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- ANALYSIS MODES -->
 ## Analysis Modes
 
 ### 1. Basic Mode
 - **Audio Energy Analysis**: Detects volume spikes and audio intensity
-- **Visual Motion Detection**: Identifies fast movement and scene changes
+- **Visual Motion Detection**: Identifies movement and scene changes
 - **Lightweight**: No AI dependencies required
-- **Best for**: General content, quick processing
+- **Best for**: Quick processing, general content
 
 ### 2. ML Mode
 - **Image Classification**: Uses ResNet-50 for action detection
-- **Advanced Audio Analysis**: Multiple audio features (energy, brightness, activity)
-- **Action Recognition**: Identifies sports, games, and dynamic content
+- **Advanced Audio Analysis**: Multiple audio features analysis
+- **Action Recognition**: Identifies dynamic content patterns
 - **Best for**: Sports, action videos, general content
 
-### 3. SmolVLM Mode ⭐ **Content-Aware AI**
+### 3. SmolVLM Mode ⭐ **Recommended**
 - **Vision-Language Understanding**: Uses SmolVLM for intelligent scene analysis
-- **Content-Optimized**: Adapts to different content types using tags (gaming, cooking, sports, etc.)
-- **Context-Aware**: Understands content-specific moments and highlights
-- **Smart Scoring**: Combines visual understanding with audio analysis
-- **GPU Accelerated**: Automatically uses CUDA if available for faster processing
-- **Best for**: Any content type when you specify appropriate tags
+- **Content-Aware**: Adapts to different content types using tags
+- **Context Understanding**: Recognizes content-specific highlight moments
+- **GPU Accelerated**: Automatic CUDA support for faster processing
+- **Best for**: Any content type with appropriate tags
 
-#### Supported Content Tags:
-- **`gaming`**: FPS, MOBA, Battle Royale, Racing games - detects eliminations, clutch plays, victories
-- **`cooking`**: Recipe tutorials, baking, grilling - highlights technique demonstrations, reveals
-- **`sports`**: Football, basketball, soccer - finds goals, amazing plays, dramatic moments  
-- **`music`**: Live performances, concerts - captures performance peaks, crowd reactions
-- **`tutorial`**: How-to, educational - identifies key explanations, demonstrations, results
-- **`general`**: Default for any other content type
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Output
+<!-- CONTENT TAGS -->
+## Content Tags
 
-Highlights are saved in a folder named `{original_filename}_highlights/` with files named:
-- `highlight_01.mp4` (highest scored)
-- `highlight_02.mp4`
-- etc.
+Content tags help the AI understand what to look for in your videos:
 
-Each output video is:
-- **1080x1920 resolution** (9:16 aspect ratio)
-- **H.264 encoded** for compatibility with all platforms
-- **Center-cropped** from the original video for optimal framing
-- **Preserves audio** with AAC encoding
+| Tag | Optimized For | Detects |
+|-----|---------------|---------|
+| `gaming` | Video games, esports | Eliminations, clutch plays, victories, skill demonstrations |
+| `cooking` | Recipe tutorials, food prep | Technique demonstrations, ingredient reveals, final dishes |
+| `sports` | Athletic competitions | Goals, amazing plays, dramatic moments, celebrations |
+| `music` | Concerts, performances | Performance peaks, crowd reactions, musical highlights |
+| `tutorial` | Educational content | Key explanations, demonstrations, before/after results |
 
-## Performance Tips
+**Note**: Tags are completely optional. Without tags, the system uses generic highlight detection.
 
-- **GPU Acceleration**: SmolVLM and ML modes automatically use CUDA if available
-- **Processing Time**: Expect ~1-2 minutes per minute of video (varies by mode and hardware)
-- **Memory Usage**: Ensure sufficient RAM for longer videos (8GB+ recommended)
-- **Storage**: Output files are typically 10-20% the size of the original
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Development
+<!-- ROADMAP -->
+## Roadmap
 
-To contribute or modify the library:
+- [x] Basic audio/visual analysis
+- [x] ML-powered highlight detection
+- [x] SmolVLM integration for content understanding
+- [x] Content-aware tagging system
+- [ ] Web interface for easier usage
+- [ ] Batch processing for multiple videos
+- [ ] Custom model training capabilities
+- [ ] Real-time streaming highlight detection
+- [ ] Integration with social media APIs
 
-```bash
-# Clone and install in development mode
-git clone <repository-url>
-cd video-highlights-extractor
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -e .[all]
-```
+See the [open issues](https://github.com/alphaofficial/video-highlights-extractor/issues) for a full list of proposed features (and known issues).
 
-The library uses a modular architecture with separate extractors for each mode in `video_extractor/core/`.# video-highlights-extractor
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+

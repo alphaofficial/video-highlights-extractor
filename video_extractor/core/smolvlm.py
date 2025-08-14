@@ -33,7 +33,10 @@ class SmolVLMHighlightExtractor(BaseHighlightExtractor):
     def _init_smolvlm(self):
         """Initialize SmolVLM model for gaming analysis"""
         try:
-            logger.info(f"Loading SmolVLM model for {', '.join(self.content_tags)} content analysis...")
+            if self.content_tags:
+                logger.info(f"Loading SmolVLM model for {', '.join(self.content_tags)} content analysis...")
+            else:
+                logger.info("Loading SmolVLM model for generic content analysis...")
             from transformers import AutoProcessor, AutoModelForImageTextToText
             import torch
             
@@ -56,7 +59,10 @@ class SmolVLMHighlightExtractor(BaseHighlightExtractor):
     
     def analyze_video_content(self) -> List[Tuple[float, float, float]]:
         """Use SmolVLM for intelligent content highlight detection"""
-        logger.info(f"Analyzing video with content-aware SmolVLM for {', '.join(self.content_tags)} content...")
+        if self.content_tags:
+            logger.info(f"Analyzing video with content-aware SmolVLM for {', '.join(self.content_tags)} content...")
+        else:
+            logger.info("Analyzing video with generic SmolVLM highlight detection...")
         
         if not self.model:
             logger.info("SmolVLM not available, using enhanced motion detection")
@@ -113,31 +119,21 @@ class SmolVLMHighlightExtractor(BaseHighlightExtractor):
                 return "unknown"
             
             # Create content type detection prompt based on tags
-            primary_tag = self.content_tags[0] if self.content_tags else "general"
-            
-            if "gaming" in self.content_tags:
-                prompt = """Look at this video content and identify the gaming genre:
-Options: FPS, Battle Royale, MOBA, Racing, Fighting, Sports, Strategy, RPG, Other
-Just respond with the genre name."""
+            if not self.content_tags:
+                prompt = "What type of video content is this? One word answer."
+            elif "gaming" in self.content_tags:
+                prompt = "What gaming genre is this? FPS, MOBA, Racing, Fighting, or Other?"
             elif "cooking" in self.content_tags:
-                prompt = """Look at this cooking video and identify the type:
-Options: Recipe Tutorial, Baking, Grilling, Fine Dining, Fast Cooking, Meal Prep, Other
-Just respond with the type."""
+                prompt = "What type of cooking content is this? Recipe, Baking, Grilling, or Other?"
             elif "sports" in self.content_tags:
-                prompt = """Look at this sports content and identify the sport:
-Options: Football, Basketball, Soccer, Tennis, Baseball, Hockey, Combat Sports, Other
-Just respond with the sport name."""
+                prompt = "What sport is this? Football, Basketball, Soccer, Tennis, or Other?"
             elif "music" in self.content_tags:
-                prompt = """Look at this music content and identify the type:
-Options: Live Performance, Music Video, Studio Recording, DJ Set, Concert, Other
-Just respond with the type."""
+                prompt = "What type of music content is this? Concert, Music Video, DJ Set, or Other?"
             elif "tutorial" in self.content_tags:
-                prompt = """Look at this tutorial content and identify the type:
-Options: Tech Tutorial, DIY, Educational, How-to, Software Demo, Other
-Just respond with the type."""
+                prompt = "What type of tutorial is this? Tech, DIY, Educational, or Other?"
             else:
-                prompt = f"""Look at this {primary_tag} video content and describe what type of content this is.
-Just give a brief 1-2 word description."""
+                primary_tag = self.content_tags[0]
+                prompt = f"What type of {primary_tag} content is this? One word answer."
 
             # Analyze the first frame to determine content type
             content_type = self._query_smolvlm_single_frame(frames[0], prompt)
@@ -232,9 +228,13 @@ Just give a brief 1-2 word description."""
     
     def _get_content_specific_prompts(self) -> List[str]:
         """Get content analysis prompts based on content tags"""
-        primary_tag = self.content_tags[0] if self.content_tags else "general"
-        
-        if "gaming" in self.content_tags:
+        if not self.content_tags:
+            return [
+                "Rate this moment's excitement level from 1-10. Consider action, drama, and interest. Respond with just the number.",
+                "Is this a highlight-worthy moment that viewers would want to see? Rate from 1-10.",
+                "Does this show interesting or engaging content? Rate excitement 1-10.",
+            ]
+        elif "gaming" in self.content_tags:
             return [
                 "Rate this gaming moment's excitement level from 1-10. Consider action, skill demonstration, and dramatic tension. Respond with just the number.",
                 "Is this a highlight-worthy gaming moment that players would want to clip and share? Rate from 1-10.",
@@ -265,6 +265,7 @@ Just give a brief 1-2 word description."""
                 "Does this show important steps, before/after comparisons, or key insights? Rate importance 1-10.",
             ]
         else:
+            primary_tag = self.content_tags[0]
             return [
                 f"Rate this {primary_tag} moment's interest level from 1-10. Consider engagement, importance, and shareability. Respond with just the number.",
                 f"Is this a highlight-worthy {primary_tag} moment that viewers would want to see? Rate from 1-10.",
@@ -307,15 +308,32 @@ Just give a brief 1-2 word description."""
             generated_text = self.processor.decode(outputs[0], skip_special_tokens=True)
             
             # Extract only the response part (after the prompt)
-            if formatted_prompt in generated_text:
-                response = generated_text.replace(formatted_prompt, "").strip()
-            else:
-                response = generated_text.strip()
+            # SmolVLM often repeats the prompt, so we need to extract just the answer
+            response = generated_text
             
-            # Clean up the response further
+            # Remove the formatted prompt if it exists
+            if formatted_prompt in response:
+                response = response.split(formatted_prompt)[-1].strip()
+            
+            # Clean up common artifacts
             response = response.replace("<image>", "").strip()
             
-            return response if response else "5"
+            # Extract just the first meaningful word/phrase (before any repetition)
+            lines = response.split('\n')
+            if lines:
+                # Take the first non-empty line
+                for line in lines:
+                    clean_line = line.strip()
+                    if clean_line and not clean_line.startswith('answer:'):
+                        # Remove "answer:" prefix if present
+                        if clean_line.lower().startswith('answer:'):
+                            clean_line = clean_line[7:].strip()
+                        # Take just the first word/phrase before any repetition
+                        first_part = clean_line.split('.')[0].split(' ')[0].strip()
+                        if first_part:
+                            return first_part
+            
+            return "5"
             
         except Exception as e:
             logger.warning(f"SmolVLM query failed: {e}")
@@ -553,9 +571,12 @@ Just give a brief 1-2 word description."""
             if frame is None:
                 return 0.0
             
-            # Use a simpler, more lenient content-aware prompt
-            primary_tag = self.content_tags[0] if self.content_tags else "general"
-            prompt = f"Is this an exciting {primary_tag} moment? Rate 1-10 where 5+ means it's worth watching. Just give the number."
+            # Use a simpler, more lenient prompt
+            if self.content_tags:
+                primary_tag = self.content_tags[0]
+                prompt = f"Rate this {primary_tag} moment 1-10:"
+            else:
+                prompt = "Rate this moment 1-10:"
             
             response = self._query_smolvlm_single_frame(frame, prompt)
             score = self._parse_content_response(response)

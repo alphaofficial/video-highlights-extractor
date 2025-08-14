@@ -3,9 +3,9 @@
 Video Highlights Extractor - Main CLI Entry Point
 
 Usage:
-    python -m video_highlights video.mp4 --mode basic --min-duration 30
-    python -m video_highlights video.mp4 --mode ml --min-duration 30  
-    python -m video_highlights video.mp4 --mode smolvlm --min-duration 30
+    python -m video_extractor video.mp4 --mode basic --min-duration 30
+    python -m video_extractor video.mp4 --mode ml --min-duration 30  
+    python -m video_extractor video.mp4 --mode smolvlm --min-duration 30
 """
 
 import argparse
@@ -24,13 +24,13 @@ def create_parser():
         epilog="""
 Examples:
   # Basic mode (audio + visual analysis)
-  python -m video_highlights video.mp4 --mode basic --min-duration 30
+  python -m video_extractor video.mp4 --mode basic --min-duration 30
 
   # ML mode (with machine learning models)  
-  python -m video_highlights video.mp4 --mode ml --min-duration 30
+  python -m video_extractor video.mp4 --mode ml --min-duration 30
 
   # SmolVLM mode (with vision-language model)
-  python -m video_highlights video.mp4 --mode smolvlm --min-duration 30
+  python -m video_extractor video.mp4 --mode smolvlm --min-duration 30
 
 Installation:
   pip install -e .              # Basic mode only
@@ -70,9 +70,9 @@ Installation:
     
     parser.add_argument(
         "--tags",
-        nargs="+",
-        default=["general"],
-        help="Content tags to optimize highlight detection (e.g., gaming, cooking, sports, music, tutorial, vlog)"
+        nargs="*",
+        default=None,
+        help="Optional content tags to optimize highlight detection (e.g., gaming, cooking, sports, music, tutorial, vlog)"
     )
     
     return parser
