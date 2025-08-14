@@ -48,17 +48,17 @@ The library provides a unified command-line interface with different analysis mo
 
 ### Basic Mode (Audio + Visual Analysis)
 ```bash
-python -m video_highlights video.mp4 --mode basic --min-duration 30
+python -m video_extractor video.mp4 --mode basic --min-duration 30
 ```
 
 ### ML Mode (Machine Learning Models)
 ```bash
-python -m video_highlights video.mp4 --mode ml --min-duration 30
+python -m video_extractor video.mp4 --mode ml --min-duration 30
 ```
 
 ### SmolVLM Mode (Vision-Language Model) - **RECOMMENDED for Gaming**
 ```bash
-python -m video_highlights video.mp4 --mode smolvlm --min-duration 30
+python -m video_extractor video.mp4 --mode smolvlm --min-duration 30
 ```
 
 ### Available Options
@@ -75,7 +75,7 @@ python -m video_highlights video.mp4 --mode smolvlm --min-duration 30
 - **Lightweight**: No AI dependencies required
 - **Best for**: General content, quick processing
 
-### 2. ML Mode  
+### 2. ML Mode
 - **Image Classification**: Uses ResNet-50 for action detection
 - **Advanced Audio Analysis**: Multiple audio features (energy, brightness, activity)
 - **Action Recognition**: Identifies sports, games, and dynamic content
@@ -122,4 +122,4 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -e .[all]
 ```
 
-The library uses a modular architecture with separate extractors for each mode in `video_highlights/core/`.# video-highlights-extractor
+The library uses a modular architecture with separate extractors for each mode in `video_extractor/core/`.# video-highlights-extractor
