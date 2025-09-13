@@ -122,7 +122,7 @@ python -m video_extractor video.mp4 \
 - **Action Recognition**: Identifies dynamic content patterns
 - **Best for**: Sports, action videos, general content
 
-### 3. SmolVLM Mode ⭐ **Recommended**
+### 3. SmolVLM Mode
 - **Vision-Language Understanding**: Uses SmolVLM for intelligent scene analysis
 - **Content-Aware**: Adapts to different content types using tags
 - **Context Understanding**: Recognizes content-specific highlight moments
