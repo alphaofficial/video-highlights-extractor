@@ -4,17 +4,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-
-
-Video Highlights Extractor is an AI-powered Python library that automatically identifies and extracts the most engaging moments from videos, converting them into vertical 9:16 format perfect for social media platforms like TikTok, Instagram Reels, and YouTube Shorts.
-
-**Key Features:**
-* 🎯 **Smart Content Detection** - Uses AI to understand different content types (gaming, cooking, sports, music, tutorials)
-* 📱 **Social Media Ready** - Outputs 9:16 vertical videos optimized for mobile platforms
-* 🧠 **Multiple AI Modes** - Choose from basic, ML-powered, or advanced vision-language analysis
-* ⚡ **GPU Accelerated** - Automatic CUDA support for faster processing
-* 🎛️ **Highly Configurable** - Customize duration, number of highlights, and content optimization
-
+Identifies and extracts the most engaging moments from videos, converting them into vertical 9:16 format perfect for social media platforms like TikTok, Instagram Reels, and YouTube Shorts.
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -167,9 +157,6 @@ Content tags help the AI understand what to look for in your videos:
 - [ ] Custom model training capabilities
 - [ ] Real-time streaming highlight detection
 - [ ] Integration with social media APIs
-
-See the [open issues](https://github.com/alphaofficial/video-highlights-extractor/issues) for a full list of proposed features (and known issues).
-
 
 
 <!-- LICENSE -->
