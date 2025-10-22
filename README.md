@@ -31,14 +31,27 @@ Identifies and extracts the most engaging moments from videos, converting them i
    cd video-highlights-extractor
    ```
 
-2. Create a virtual environment
+2. Install with uv (recommended)
    ```sh
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   # Basic installation (audio + visual analysis)
+   uv sync
+
+   # With ML capabilities
+   uv sync --extra ml
+
+   # With SmolVLM (content-aware AI)
+   uv sync --extra smolvlm
+
+   # Full installation (all features)
+   uv sync --extra all
    ```
 
-3. Install the package
+   Or with pip:
    ```sh
+   # Create a virtual environment
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+
    # Basic installation (audio + visual analysis)
    pip install -e .
 
@@ -60,6 +73,10 @@ Identifies and extracts the most engaging moments from videos, converting them i
 
 Extract highlights using default settings:
 ```bash
+# With uv
+uv run python -m video_extractor video.mp4
+
+# With activated venv
 python -m video_extractor video.mp4
 ```
 
@@ -69,28 +86,28 @@ Optimize extraction for specific content types:
 
 ```bash
 # Gaming content
-python -m video_extractor gameplay.mp4 --mode smolvlm --tags gaming
+uv run python -m video_extractor gameplay.mp4 --mode smolvlm --tags gaming
 
 # Cooking videos
-python -m video_extractor recipe.mp4 --mode smolvlm --tags cooking
+uv run python -m video_extractor recipe.mp4 --mode smolvlm --tags cooking
 
 # Sports highlights
-python -m video_extractor match.mp4 --mode smolvlm --tags sports
+uv run python -m video_extractor match.mp4 --mode smolvlm --tags sports
 
 # Music performances
-python -m video_extractor concert.mp4 --mode smolvlm --tags music
+uv run python -m video_extractor concert.mp4 --mode smolvlm --tags music
 
 # Tutorial content
-python -m video_extractor tutorial.mp4 --mode smolvlm --tags tutorial
+uv run python -m video_extractor tutorial.mp4 --mode smolvlm --tags tutorial
 
 # Multiple tags
-python -m video_extractor video.mp4 --mode smolvlm --tags gaming sports
+uv run python -m video_extractor video.mp4 --mode smolvlm --tags gaming sports
 ```
 
 ### Advanced Options
 
 ```bash
-python -m video_extractor video.mp4 \
+uv run python -m video_extractor video.mp4 \
   --mode smolvlm \
   --tags gaming \
   --min-duration 45 \

@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List, Tuple, Dict
 import cv2
 import numpy as np
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 import logging
 
 # Fix tokenizers parallelism warning
