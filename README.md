@@ -123,6 +123,8 @@ uv run python -m video_extractor video.mp4 \
 | `--min-duration` | Minimum highlight duration in seconds | `30` |
 | `--max-highlights` | Maximum number of highlights | Auto-calculated |
 
+Highlights are always resized to full-HD 1080x1920 (9:16) when cropped.
+
 
 <!-- ANALYSIS MODES -->
 ## Analysis Modes
