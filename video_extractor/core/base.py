@@ -180,32 +180,56 @@ class BaseHighlightExtractor:
                 f"Creating highlight {i}/{len(highlights)}: {start_time:.1f}s-{end_time:.1f}s (score: {score:.3f})"
             )
 
-            # Use FFmpeg to extract and crop the segment
+            # Use FFmpeg to extract and crop the segment.
+            # -ss before -i seeks fast and is still frame-accurate when re-encoding.
+            # Upscale path: crop to 9:16, lift to 4:4:4 @ 10-bit so the resampler
+            # runs at full precision with complete chroma, lanczos resize with
+            # accurate rounding and full chroma interpolation, then CAS
+            # edge-adaptive sharpening (halo-free, unlike unsharp) to restore
+            # perceived sharpness before dropping back to encoder-friendly 4:2:0.
+            upscale_filter = (
+                "crop=ih*9/16:ih:(iw-ih*9/16)/2:0,"
+                "format=yuv444p10le,"
+                "scale=1080:1920:"
+                "flags=lanczos+accurate_rnd+full_chroma_int+full_chroma_inp,"
+                "cas=0.4,"
+                "format=yuv420p"
+            )
             cmd = [
                 "ffmpeg",
                 "-y",
-                "-i",
-                str(self.video_path),
                 "-ss",
                 str(start_time),
+                "-i",
+                str(self.video_path),
                 "-t",
                 str(end_time - start_time),
                 "-vf",
-                "crop=ih*9/16:ih:(iw-ih*9/16)/2:0,scale=1080:1920",
+                upscale_filter,
                 "-c:v",
                 "libx264",
                 "-c:a",
                 "aac",
+                "-b:a",
+                "256k",
                 "-preset",
-                "medium",
+                "veryslow",
                 "-crf",
-                "23",
+                "16",
                 "-pix_fmt",
                 "yuv420p",  # Force 8-bit for QuickTime compatibility
                 "-profile:v",
                 "high",  # H.264 High profile
                 "-level:v",
-                "4.0",  # H.264 level 4.0
+                "4.2",  # H.264 level 4.2: full-HD up to 60fps sources
+                "-colorspace",
+                "bt709",  # Keep color metadata explicit so players don't guess
+                "-color_primaries",
+                "bt709",
+                "-color_trc",
+                "bt709",
+                "-movflags",
+                "+faststart",  # Streamable MP4 for uploads
                 str(output_file),
             ]
 
